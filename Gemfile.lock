@@ -91,7 +91,6 @@ GEM
     nokogiri (1.11.7)
       mini_portile2 (~> 2.5.0)
       racc (~> 1.4)
-    pg (0.20.0)
     puma (3.12.6)
     racc (1.5.2)
     rack (2.2.3)
@@ -186,7 +185,6 @@ DEPENDENCIES
   jbuilder (~> 2.5)
   jquery-rails
   listen (>= 3.0.5, < 3.2)
-  pg (= 0.20.0)
   puma (~> 3.7)
   rails (~> 5.1.6)
   rails-i18n

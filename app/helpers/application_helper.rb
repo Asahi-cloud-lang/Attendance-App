@@ -9,4 +9,9 @@ module ApplicationHelper
       page_name + " | " + base_title # 文字列を連結して返す
     end
   end
+  
+  # 管理者か確認
+  def admin?
+    current_user.admin?
+  end
 end

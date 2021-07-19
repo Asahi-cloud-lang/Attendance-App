@@ -5,13 +5,6 @@
   text-align: center;
 }
 
-/* ユーザー情報下ボタン */
-
-.btn-users-show {
-  margin-top: -10px;
-  margin-bottom: 10px;
-}
-
 /* ユーザー勤怠情報テーブル */
 
 #table-attendances {
@@ -23,6 +16,11 @@
     vertical-align: middle;
     text-align: center;
   }
+}
+
+.btn-admin a {
+  display: inline-block;
+  margin: 2px 5px;
 }
 
 /* 入力フォーム */
@@ -41,6 +39,23 @@
 
 .btn-user--edit {
   margin-top: 10px;
+}
+
+.table .table-padding {
+  padding: 10px;
+}
+
+
+.table .table-space {
+  line-height: 3rem;
+}
+
+.table-margin {
+  margin-bottom: 30px;
+}
+
+.table-block {
+  display: block;
 }
 
 /* ユーザー一覧ページ */
