@@ -6,10 +6,13 @@ ja:
     attributes:
         user:
           id: ID
+          card_id: カードID
           name: 名前
           email: メールアドレス
           department: 所属
           basic_time: 基本時間
+          basic_start_time: 指定勤務開始時間
+          basic_finish_time: 指定勤務終了時間
           work_time: 勤務時間
           password: パスワード
           password_confirmation: パスワード再入力

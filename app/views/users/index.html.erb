@@ -1,35 +1,69 @@
 <% provide(:title, 'All Users') %>
 <h1>ユーザー一覧</h1>
 
-<div class="col-md-10 col-md-offset-1">
-  <table class="table-hover" id="table-users">
-    <% @users.each do |user| %>
-    <tbody class="table-frame table-margin table-block">
-      <tr>
-        <td>
-          <%= user.name %>
-        </td>
-      </tr>
-      <% if current_user.admin? && !current_user?(user) %>
-        <tr>
-          <td>
-              <%= link_to "削除", user, method: :delete,
-                  data: { confirm: "削除してよろしいですか？" },class: "btn btn-danger" %>
-          </td>
-        </tr>
-      <% end %>
-      <% if current_user.admin? && !current_user?(user) %>
-        <tr>
-          <td>
-            <%= link_to "基本情報編集", edit_basic_info_user_path(user), remote: true, class: "btn btn-success" %>
-          </td>
-        </tr>
-      <% end %>
-    </tbody>
-    <% end %>
-  </table>
-  <%= will_paginate %>
+<div class="user-import">
+  <input type="file" >
+  <button class="btn btn-primary" >CSVをインポート</button>
 </div>
 
-<!--モーダルウインドウ表示-->
-<div id="edit-basic-info" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true"></div>
+<div class="col-md-10 col-md-offset-1">
+  <div class="table-hover table-width" id="table-users">
+    <% @users.each do |user| %>
+    <div class="table-frame table-margin table-block">
+      <p>
+        <%= user.name %>
+      </p>
+      <p>
+      <% if current_user.admin? && !current_user?(user) %>
+        <p>
+          | <%= link_to "削除", user, method: :delete, data: { confirm: "削除してよろしいですか？" }, class: "btn btn-primary" %>
+        </p>
+      <% end %>
+      <div>
+        <% if current_user.admin? && !current_user?(user) %>
+            <div class="table-edit-frame">
+              <button type="button" class="btn btn-primary acdn-btn" data-target="#collapse<%= user.id %>" >編集</button>
+              <div class="open hide">
+                <%= form_with(model: user, local: true) do |f| %>
+
+                  <%= f.label :name, class: "label-edit label-edit-space" %>
+                  <%= f.text_field :name, class: "form-control" %>
+
+                  <%= f.label :email, class: "label-edit label-edit-space" %>
+                  <%= f.email_field :email, class: "form-control" %>
+
+                  <%= f.label :department, class: "label-edit label-edit-space" %>
+                  <%= f.text_field :department, class: "form-control" %>
+                  
+                  <%= f.label :id, class: "label-edit label-edit-space" %>
+                  <%= f.number_field :id, class: "form-control" %>
+                  
+                  <%= f.label :card_id, class: "label-edit label-edit-space" %>
+                  <%= f.text_field :card_id, class: "form-control" %>
+
+                  <%= f.label :password, class: "label-edit label-edit-space" %>
+                  <%= f.password_field :password, class: "form-control" %>
+
+                  <%= f.label :password_confirmation, class: "label-edit label-edit-space" %>
+                  <%= f.password_field :password_confirmation, class: "form-control" %>
+
+                  <%= f.label :basic_time, class: "label-edit label-edit-space" %>
+                  <%= f.time_field :basic_time, class: "form-control" %>
+
+                  <%= f.label :basic_start_time, class: "label-edit label-edit-space" %>
+                  <%= f.time_field :basic_start_time, class: "form-control" %>
+                  
+                  <%= f.label :basic_finish_time, class: "label-edit label-edit-space" %>
+                  <%= f.time_field :basic_finish_time, class: "form-control" %>
+
+                  <%= f.submit "編集", class: "btn btn-primary btn-block btn-edit label-edit-space" %>
+                <% end %>
+              </div>
+            </div>
+        <% end %>
+      </div>
+    </div>
+    <% end %>
+  </div>
+  <%= will_paginate %>
+</div>

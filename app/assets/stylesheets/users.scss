@@ -66,6 +66,25 @@
   }  
 }
 
+.table-width {
+  width: 100%;
+}
+
+.table-edit-frame {
+  display: block;
+  width: 100%;
+  padding: 10px;
+  background: #EEE;
+}
+
+.label-edit-space {
+  margin: 20px 0 5px;
+}
+
+.hide {
+  display: none;
+}
+
 /* 基本情報編集モーダルウインドウ */
 
 .label-basic-info {
@@ -75,4 +94,13 @@
 .btn-basic-info {
   margin: 15px 0;
   width: 30%;
+}
+
+.user-import {
+  margin: 30px 0px;
+}
+
+.user-import input {
+  border: 2px solid;
+  margin: 10px 0px;
 }
