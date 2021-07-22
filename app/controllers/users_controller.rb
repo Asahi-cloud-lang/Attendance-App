@@ -8,6 +8,10 @@ class UsersController < ApplicationController
   def index
     @users = User.paginate(page: params[:page])
   end
+  
+  def commuting_index
+    @users = User.all.includes(:attendances)
+  end
 
   def show
     @worked_sum = @attendances.where.not(started_at: nil).count

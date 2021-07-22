@@ -1,4 +1,6 @@
 Rails.application.routes.draw do
+  get 'bases/show'
+
   root 'static_pages#top'
   get '/signup', to: 'users#new'
 
@@ -9,6 +11,7 @@ Rails.application.routes.draw do
 
   resources :users do
     member do
+      get 'commuting_index'
       get 'edit_basic_info'
       patch 'update_basic_info'
       get 'attendances/edit_one_month'
