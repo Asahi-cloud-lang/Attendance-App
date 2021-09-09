@@ -15,6 +15,10 @@ textarea {
   resize: vertical;
 }
 
+.middle {
+  vertical-align: middle !important;
+}
+
 .center {
   text-align: center;
 }
@@ -101,4 +105,8 @@ p {
 
 .modal-dialog-center {
   padding-top: 10%;
+}
+
+.modal-space {
+ padding: 15px; 
 }

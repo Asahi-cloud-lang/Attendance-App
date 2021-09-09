@@ -1,0 +1,36 @@
+<div class="modal-dialog modal-lg modal-dialog-center">
+  <div class="modal-content">
+    <div class="modal-header">
+      <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+        <span aria-hidden="true">ｘ</span>
+      </button>
+      <h1 class="modal-title">拠点情報編集</h1>
+    </div>
+    <div class="modal-body">
+      <div class="row">
+        <div class="col-md-6 col-md-offset-3">
+          <%= form_with(model: @base, url: bases_user_path(@user), local: true, method: :patch) do |f| %>
+            <%= render 'shared/error_messages', object: @user %>
+
+            <%= f.label "氏名", class: "label-base-edit" %>
+            <p><%= @user.name %></p>
+            
+            <%= f.label :name, class: "label-base-edit" %>
+            <select name="base_id" class="form-control" prompt="<%= @base.name %>" >
+              <% @bases.each do |base| %>
+                <option value="<%= base.id %>"><%= base.name %></option>
+              <% end %>
+            </select>
+            
+            <div class="center">
+              <%= f.submit "修正", class: "btn btn-primary btn-edit" %>
+              <button type="button" class="btn btn-default btn-edit" data-dismiss="modal">
+                キャンセル
+              </button>
+            </div>
+          <% end %>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

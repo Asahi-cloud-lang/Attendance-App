@@ -8,14 +8,14 @@
         <%= link_to "⇨", user_path(date: @first_day.next_month), class: "btn btn-info" %>
       </td>
       <td>
-        指定勤務時間：<%= format_basic_info(@user.basic_start_time) %><br>
-        指定勤務終了時間：<%= format_basic_info(@user.basic_finish_time) %>
+        指定勤務時間：<%= format_basic_info(@user.designated_work_start_time) %><br>
+        指定勤務終了時間：<%= format_basic_info(@user.designated_work_end_time) %>
       </td>
       <td>基本時間：<%= format_basic_info(@user.basic_time) %></td>
       <td>初日：<%= l(@first_day, format: :short) %></td>
     </tr>
     <tr>
-      <td>所属：<%= @user.department.present? ? @user.department : "未所属" %></td>
+      <td>所属：<%= @user.affiliation.present? ? @user.affiliation : "未所属" %></td>
       <td>名前：<%= @user.name %></td>
       <td>出勤日数:<%= @worked_sum %></td>
       <td>締日：<%= l(@last_day, format: :short) %></td>
@@ -26,14 +26,18 @@
 <div class="btn-admin">
   <% if admin? %>
   <div>
-    <%= link_to "【所属長承認申請のお知らせ】", attendances_edit_one_month_user_path(date: @first_day) %><br>
-    <%= link_to "【勤怠変更申請のお知らせ】", attendances_edit_one_month_user_path(date: @first_day) %><br>
-    <%= link_to "【残業申請のお知らせ】", attendances_edit_one_month_user_path(date: @first_day) %>
+    <% if @unapprovals.count >=1 %>
+      <span class="text-danger"><%= link_to "【所属長承認申請のお知らせ】", one_month_approval_user_path(@user), class: "text-danger", remote: true %>　<%= @unapprovals.count %>件の通知があります</span><br>
+    <% else %> 
+      <%= link_to "【所属長承認申請のお知らせ】", one_month_approval_user_path(@user) %><br>
+    <% end %>
+    <%= link_to "【勤怠変更申請のお知らせ】", attendance_change_approval_user_path(@user) %><br>
+    <%= link_to "【残業申請のお知らせ】", overtime_approval_user_path(@user) %>
   </div>
   <% end %>
   <div>
     <%= link_to "勤怠を編集", attendances_edit_one_month_user_path(date: @first_day), class: "btn btn-primary" %>
-    <%= link_to "CSV出力", attendances_edit_one_month_user_path(date: @first_day), class: "btn btn-primary" %>
+    <%= link_to "CSV出力", user_path(format: :csv), class: "btn btn-primary" %>
   </div>
   <div>
     <%= link_to "勤怠修正ログ", attendances_edit_one_month_user_path(date: @first_day), class: "btn btn-primary" %>
@@ -74,7 +78,14 @@
     <tbody>
     <% @attendances.each do |day| %>
       <tr>
-        <td><%= link_to "残業申請", attendances_edit_one_month_user_path(date: @first_day), class: "btn btn-primary" %></td>
+        <td>
+          <% if $days_of_the_week[day.worked_on.wday] == "土" || $days_of_the_week[day.worked_on.wday] == "日" %>
+          <% elsif day.overtime_approval = "false" %>
+            <%= link_to "残業申請", attendances_overtime_user_path(day), class: "btn btn-primary" %>
+          <% else %>
+            <span class="btn btn-primary">承認済み</span>
+          <% end %>
+        </td>
         <td><%= l(day.worked_on, format: :short) %></td>
         <td><%= $days_of_the_week[day.worked_on.wday] %></td>
         <td>
@@ -126,16 +137,27 @@
         <td></td>
         <td colspan=5></td>
         <td class="table-padding table-space">
-          所属長承認　未<br>
-          <select>
-            <option>管理者を選択してください</option>
-            <option>山下さん</option>
-            <option>鈴木さん</option>
-            <option>佐藤さん</option>
-          </select><br>
-          <%= link_to "申請", attendances_edit_one_month_user_path(date: @first_day), class: "btn btn-primary" %>
+          所属長承認　
+          <% if @approval.mark == 0 %>
+            <span class="text-primary">承認済</span>
+          <% else %>
+            <span class="text-danger">未承認</span>
+          <% end %>
+          <br>
+          <%= form_with( url: request_one_month_approval_user_path( month: @first_day.month ),local: true, method: :patch ) do |f| %>
+            <select name="authorizer">
+              <option>管理者を選択してください</option>
+              <option value="1">上長A</option>
+              <option value="2">上長B</option>
+              <option value="3">上長C</option>
+            </select><br>
+            <%= f.submit "申請", class: "btn btn-primary btn-edit" %>
+          <% end %>
         </td>
       </tr>
     </tfoot>
   </table>
 </div>
+
+<!--モーダルウインドウ表示-->
+<div id="one_month_approval" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true"></div>

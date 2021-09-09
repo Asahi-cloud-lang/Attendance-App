@@ -51,4 +51,33 @@ class ApplicationController < ActionController::Base
     flash[:danger] = "ページ情報の取得に失敗しました、再アクセスしてください。"
     redirect_to root_url
   end
+  
+  # 本日の勤怠情報を取得
+  def set_worked_state
+    @attendances.each do |day|
+      if Date.current == day.worked_on
+        if day.started_at.present? && day.finished_at.nil?
+          @today_worked_state = day
+          @state = "出社中"
+        else
+          @today_worked_state = day
+          @state = "退社済"
+        end
+      end
+    end
+  end
+  
+  # 勤怠承認データ作成
+  def set_approval
+    @approval = Apply.find_by( user_id: params[:id], month: @first_day.month )
+    if @approval == nil
+      @approval = Apply.new
+      @approval.mark = 0
+      @approval.month = @first_day.month
+      @approval.user_id = params[:id]
+      @approval.user_name = @user.name
+      @approval.save
+    end
+    @unapprovals = Apply.where(mark: 1)
+  end
 end

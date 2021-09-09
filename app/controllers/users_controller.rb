@@ -1,9 +1,12 @@
+require 'csv'
+
 class UsersController < ApplicationController
   before_action :set_user, only: [:show, :edit, :update, :destroy, :edit_basic_info, :update_basic_info]
   before_action :logged_in_user, only: [:index, :edit, :update, :destroy, :edit_basic_info, :update_basic_info]
   before_action :correct_user, only: [:edit, :update]
   before_action :admin_user, only: [:destroy, :edit_basic_info, :update_basic_info]
   before_action :set_one_month, only: :show
+  before_action :set_approval, only: :show
 
   def index
     @users = User.paginate(page: params[:page])
@@ -14,8 +17,31 @@ class UsersController < ApplicationController
   end
 
   def show
+    @approval = Apply.find_by( user_id: params[:id], month: @first_day.month )
+    @unapprovals = Apply.where(mark: 1).where(authorizer: params[:id])
     @worked_sum = @attendances.where.not(started_at: nil).count
+    respond_to do |format|
+      format.html
+      format.csv do
+        send_posts_csv(@attendances)
+      end
+    end
   end
+  
+  def send_posts_csv(attendances)
+    csv_data = CSV.generate do |csv|
+      header = %w(worked_on started_at finished_at note)
+      csv << header
+
+      attendances.each do |day|
+        values = [day.worked_on,day.started_at,day.finished_at,day.note]
+        csv << values
+      end
+
+    end
+    send_data(csv_data, filename: "attendances.csv")
+  end
+
 
   def new
     @user = User.new
@@ -61,14 +87,19 @@ class UsersController < ApplicationController
     end
     redirect_to users_url
   end
+  
+  def import
+    User.import(params[:file])
+    redirect_to users_url
+  end
 
   private
 
     def user_params
-      params.require(:user).permit(:name, :email, :department, :password, :password_confirmation)
+      params.require(:user).permit(:name, :email, :affiliation, :uid, :password, :password_confirmation)
     end
 
     def basic_info_params
-      params.require(:user).permit(:department, :basic_time, :work_time)
+      params.require(:user).permit(:affiliation, :basic_time, :work_time)
     end
 end

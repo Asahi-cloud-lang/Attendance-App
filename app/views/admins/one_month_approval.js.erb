@@ -1,0 +1,15 @@
+<!--モーダルウィンドウ-->
+$("#one_month_approval").html("<%= escape_javascript(render 'admins/one_month_approval') %>");
+$("#one_month_approval").modal("show");
+
+$(function() {
+  $('#submit').prop('disabled', true);
+
+  $('#check').on('click', function() {
+    if ( $(this).prop('checked') == false ) {
+      $('#submit').prop('disabled', true);
+    } else {
+      $('#submit').prop('disabled', false);
+    }
+  });
+});

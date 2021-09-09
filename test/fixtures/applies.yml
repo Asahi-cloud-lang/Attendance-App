@@ -1,0 +1,13 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  month: 2021-09-02
+  mark: MyString
+  user_id: 1
+  authorizer: 1
+
+two:
+  month: 2021-09-02
+  mark: MyString
+  user_id: 1
+  authorizer: 1

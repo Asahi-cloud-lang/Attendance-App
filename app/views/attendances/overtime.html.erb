@@ -1,0 +1,40 @@
+<% provide(:title, @user.name) %>
+<%= form_with(model: @user, url: attendances_update_one_month_user_path(date: @first_day), local: true, method: :patch) do |f| %>
+  <div>
+    <h1>【残業申請】</h1>
+    <table class="table table-bordered table-condensed table-hover" id="table-attendances">
+      <thead>
+        <tr>
+          <th>日付</th>
+          <th>曜日</th>
+          <th>終了予定時間</th>
+          <th>翌日</th>
+          <th>業務処理内容</th>
+          <th>指示者確認㊞</th>
+        </tr>
+      </thead>
+        
+      <tbody>
+        <% @user.attendances.each do |day| %>
+        <%= f.fields_for "attendances[]", day do |attendance| %>
+          <% if Date.current == day.worked_on %>
+            <tr>
+              <td><%= l(day.worked_on, format: :short) %></td>
+              <td><%= $days_of_the_week[day.worked_on.wday] %></td>
+              <td><%= attendance.time_field :finished_at, class: "form-control" %></td>
+              <td>チェックボックス</td>
+              <td><%= attendance.text_field :note, class: "form-control" %></td>
+              <td>指示者セレクトボックス</td>
+            </tr>
+          <% end %>
+        <% end %>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="center">
+    <%= f.submit "更新", class: "btn btn-lg btn-primary" %>
+    <%= link_to "キャンセル", user_path(date: @first_day), class: "btn btn-lg btn-default" %>
+  </div>
+<% end %>

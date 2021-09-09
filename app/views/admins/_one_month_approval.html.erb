@@ -1,0 +1,48 @@
+<div class="modal-dialog modal-lg modal-dialog-center">
+  <div class="modal-content">
+    <div class="modal-header">
+      <div class="modal-space">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">ｘ</span>
+        </button>
+      </div>
+      <div class="modal-body">
+      <% @unapprovals.each do | key, unapproval | %>
+      <%= form_with( url: update_one_month_approval_user_path( user_name: key), local: true, method: :patch ) do |f| %>
+        <h1 class="modal-title"><%= key %>からの1ヶ月分の勤怠申請</h1>
+        <table class="table table-bordered center">
+          <tr>
+            <th class="center"><%= @today.month %>月</th>
+            <th class="center">指示者確認㊞</th>
+            <th class="center"><label class="form-check-label" for="check">変更</label></th>
+            <th class="center">勤怠を確認する</th>
+          </tr>
+          <% unapproval.each do | detail | %>
+          <tr>
+            <td class="center middle"><%= detail.month %>月</td>
+            <td class="center middle">
+              <select class="form-select" name="mark_id">
+                <option selected value="1">申請中</option>
+                <option value="0">なし</option>
+                <option value="2">承認</option>
+                <option value="3">否認</option>
+              </select>
+            </td>
+            <td class="center middle">
+              <input class="form-check-input" type="checkbox" id="check" name="month" value="<%= detail.month %>" >
+            </td>
+            <td class="center middle">
+              <%= link_to "確認", user_path( detail.user_id ), class: "btn btn-primary" %>
+            </td>
+          </tr>
+          <% end %>
+        </table>
+        <div class-"center">
+          <%= f.submit "変更を送信する", class: "btn btn-primary btn-edit", id: "submit" %>
+        </div>
+      <% end %>
+      <% end %>
+      </div>
+    </div>
+  </div>
+</div>
