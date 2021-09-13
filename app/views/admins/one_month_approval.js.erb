@@ -3,13 +3,19 @@ $("#one_month_approval").html("<%= escape_javascript(render 'admins/one_month_ap
 $("#one_month_approval").modal("show");
 
 $(function() {
-  $('#submit').prop('disabled', true);
+	<!--/* 「同意する」チェックイベント */-->
+	$('[type="checkbox"]').on('click', function(){
+		if($('[type="checkbox"]').prop("checked")){
+			$('[type="submit"]').css('background-color', 'rgb(51, 51, 255)');
+		} else {
+			$('[type="submit"]').css('background-color', 'rgb(102, 102, 102)');
+		}
+	});
 
-  $('#check').on('click', function() {
-    if ( $(this).prop('checked') == false ) {
-      $('#submit').prop('disabled', true);
-    } else {
-      $('#submit').prop('disabled', false);
-    }
-  });
+	<!--/* 「同意する」がチェックされていない場合submit=false */-->
+	$('[type="submit"]').on('click', function(){
+		if ($('[type="submit"]').css('background-color') == 'rgb(102, 102, 102)') {
+			return false;
+		}
+	});
 });

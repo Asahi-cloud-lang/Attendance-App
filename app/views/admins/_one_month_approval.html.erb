@@ -8,7 +8,7 @@
       </div>
       <div class="modal-body">
       <% @unapprovals.each do | key, unapproval | %>
-      <%= form_with( url: update_one_month_approval_user_path( user_name: key), local: true, method: :patch ) do |f| %>
+      <%= form_with( url: update_one_month_approval_user_path( unapprovals: unapproval ), local: true, method: :patch ) do |f| %>
         <h1 class="modal-title"><%= key %>からの1ヶ月分の勤怠申請</h1>
         <table class="table table-bordered center">
           <tr>
@@ -18,23 +18,20 @@
             <th class="center">勤怠を確認する</th>
           </tr>
           <% unapproval.each do | detail | %>
+          <%= fields_for detail do | f | %><br>
           <tr>
             <td class="center middle"><%= detail.month %>月</td>
             <td class="center middle">
-              <select class="form-select" name="mark_id">
-                <option selected value="1">申請中</option>
-                <option value="0">なし</option>
-                <option value="2">承認</option>
-                <option value="3">否認</option>
-              </select>
+              <%= f.select :mark, {'なし': 0, '申請中': 1, '承認': 2, '否認': 3}, { include_blank: '選択してください'}, { class: 'form-select' , required: true } %>
             </td>
             <td class="center middle">
-              <input class="form-check-input" type="checkbox" id="check" name="month" value="<%= detail.month %>" >
+              <%= f.check_box :month, { class: 'form-check-input', id: 'check' }, detail.month  %>
             </td>
             <td class="center middle">
               <%= link_to "確認", user_path( detail.user_id ), class: "btn btn-primary" %>
             </td>
           </tr>
+          <% end %>
           <% end %>
         </table>
         <div class-"center">

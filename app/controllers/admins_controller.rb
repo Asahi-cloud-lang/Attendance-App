@@ -10,13 +10,15 @@ class AdminsController < ApplicationController
   end
   
   def update_one_month_approval
-    @approval = Apply.find_by( user_name: params[:user_name], month: params[:month].to_i )
-    @approval.mark = params[:mark_id]
-    if @approval.save
-      redirect_to user_url
-      flash[:success] = "処理致しました。"
-    else
-      render :show
+    params[:unapprovals].each do |value|
+      approval = Apply.find_by( user_name: value.user_name, month: value.month.to_i )
+      approval.mark = value.mark_id
+      if approval.save
+        redirect_to user_url
+        flash[:success] = "処理致しました。"
+      else
+        render :show
+      end
     end
   end
   
