@@ -1,5 +1,5 @@
 <% provide(:title, @user.name) %>
-<%= form_with(model: @user, url: attendances_update_one_month_user_path(date: @first_day), local: true, method: :patch) do |f| %>
+<%= form_with(model: @user, url: attendances_update_overtime_user_path(date: @first_day), local: true, method: :patch) do |f| %>
   <div>
     <h1>【残業申請】</h1>
     <table class="table table-bordered table-condensed table-hover" id="table-attendances">
@@ -8,7 +8,7 @@
           <th>日付</th>
           <th>曜日</th>
           <th>終了予定時間</th>
-          <th>翌日</th>
+          <th>変更</th>
           <th>業務処理内容</th>
           <th>指示者確認㊞</th>
         </tr>
@@ -17,14 +17,16 @@
       <tbody>
         <% @user.attendances.each do |day| %>
         <%= f.fields_for "attendances[]", day do |attendance| %>
-          <% if Date.current == day.worked_on %>
+          <% if @day == day.worked_on %>
             <tr>
               <td><%= l(day.worked_on, format: :short) %></td>
               <td><%= $days_of_the_week[day.worked_on.wday] %></td>
-              <td><%= attendance.time_field :finished_at, class: "form-control" %></td>
-              <td>チェックボックス</td>
+              <td><%= attendance.time_field :scheduled_end_time, class: "form-control" %></td>
+              <td><%= attendance.check_box :check_box, { class: 'form-check-input', id: 'check' }, day.check_box %></td>
               <td><%= attendance.text_field :note, class: "form-control" %></td>
-              <td>指示者セレクトボックス</td>
+              <td><%= attendance.select :approval_authorizer, {'上長A': 1, '上長B': 2, '上長C': 3}, { class: 'form-select' , required: true } %></td>
+              <%= attendance.hidden_field :overtime_approval, value: 1 %>
+              <%= attendance.hidden_field :user_id, value: day.user_id %>
             </tr>
           <% end %>
         <% end %>

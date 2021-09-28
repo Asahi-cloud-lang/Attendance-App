@@ -1,0 +1,68 @@
+<div class="modal-dialog modal-lg modal-dialog-center">
+  <div class="modal-content">
+    <div class="modal-header">
+      <div class="modal-space">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">ｘ</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <h1>勤怠ログ</h1>
+        <div><button><%= link_to "リセット", attendances_log_user_path(@user), method: :delete ,data: { confirm: "削除してよろしいですか？" } %></button></div>
+        <!--ここから先が検索機能の実装部-->
+        <%= form_tag( attendances_log_user_path(@user), method: 'get', action: 'approval_log' , remote: true ) do %>
+          <div class="select-field">
+            <%= select_tag(:year, options_for_select([[ @prev_year, @prev_year ],[ @year, @year ],[ @next_year, @next_year ]]), { include_blank: '年'}) %>
+            <% if params[:year].present? %>
+              <span class="select-field-result"><%= params[:year] %></span>
+            <% end %>
+          </div>
+          <div class="select-field">
+            <%= select_tag(:month, options_for_select([["1","1"],["2","2"],["3","3"],["4","4"],["5","5"],["6","6"],["7","7"],["8","8"],["9","9"],["10","10"],["11","11"],["12","12"]]), { include_blank: '月'}) %>
+            <% if params[:month].present? %>
+              <span class="select-field-result"><%= params[:month] %></span>
+            <% end %>
+            <span><%= submit_tag "絞り込み" %></span>
+          </div>
+        <% end %>
+        <!--ここまで-->
+        <table class="table table-bordered table-condensed table-hover" id="table-attendances">
+          <thead>
+            <tr>
+              <th>日付</th>
+              <th>曜日</th>
+              <th>変更前出社時間</th>
+              <th>変更前出社時間</th>
+              <th>変更後出社</th>
+              <th>変更後出社</th>
+              <th>指示者</th>
+              <th>承認日</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% @approval_logs.each do |log| %>
+            <tr>
+              <td><%= l(log.log_worked_on, format: :short) %></td>
+              <td><%= $days_of_the_week[log.log_worked_on.wday] %></td>
+              <td><%= l(log.log_changed_started_at, format: :time) %></td>
+              <td><%= l(log.log_changed_finished_at, format: :time) %></td>
+              <td><%= l(log.log_started_at, format: :time) %></td>
+              <td><%= l(log.log_finished_at, format: :time) %></td>
+              <td>
+                <% if log.approval_authorizer = 1 %>
+                  上長A
+                <% elsif log.approval_authorizer = 2 %>
+                  上長B
+                <% elsif log.approval_authorizer = 3 %>  
+                  上長C
+                <% end %>
+              </td>
+              <td><%= l(log.created_at, format: :day) %></td>
+            </tr>
+            <% end %>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>

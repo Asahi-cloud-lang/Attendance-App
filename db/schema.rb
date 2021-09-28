@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20210902041813) do
+ActiveRecord::Schema.define(version: 20210923134532) do
 
   create_table "applies", force: :cascade do |t|
     t.date "month"
@@ -18,6 +18,7 @@ ActiveRecord::Schema.define(version: 20210902041813) do
     t.integer "user_id"
     t.string "user_name"
     t.string "authorizer"
+    t.string "check_box"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end
@@ -26,8 +27,14 @@ ActiveRecord::Schema.define(version: 20210902041813) do
     t.date "worked_on"
     t.datetime "started_at"
     t.datetime "finished_at"
+    t.datetime "scheduled_end_time"
+    t.datetime "changed_started_at"
+    t.datetime "changed_finished_at"
+    t.string "change_approval", default: "0"
+    t.string "overtime_approval", default: "0"
+    t.string "approval_authorizer", default: "1"
     t.string "note"
-    t.boolean "overtime_approval", default: false
+    t.string "check_box"
     t.integer "user_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
@@ -36,6 +43,18 @@ ActiveRecord::Schema.define(version: 20210902041813) do
 
   create_table "bases", force: :cascade do |t|
     t.string "name"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  create_table "histories", force: :cascade do |t|
+    t.date "log_worked_on"
+    t.integer "user_id"
+    t.datetime "log_started_at"
+    t.datetime "log_finished_at"
+    t.datetime "log_changed_started_at"
+    t.datetime "log_changed_finished_at"
+    t.string "approval_authorizer"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end
@@ -53,10 +72,10 @@ ActiveRecord::Schema.define(version: 20210902041813) do
     t.string "uid"
     t.string "employee_number"
     t.integer "base_id"
-    t.datetime "basic_time", default: "2021-09-03 00:00:00"
-    t.datetime "designated_work_start_time", default: "2021-09-03 00:00:00"
-    t.datetime "designated_work_end_time", default: "2021-09-03 09:00:00"
-    t.datetime "work_time", default: "2021-09-02 23:00:00"
+    t.datetime "basic_time", default: "2021-09-29 00:00:00"
+    t.datetime "designated_work_start_time", default: "2021-09-29 00:00:00"
+    t.datetime "designated_work_end_time", default: "2021-09-29 09:00:00"
+    t.datetime "work_time", default: "2021-09-28 23:00:00"
     t.index ["email"], name: "index_users_on_email", unique: true
   end
 

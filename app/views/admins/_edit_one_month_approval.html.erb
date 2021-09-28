@@ -1,0 +1,77 @@
+<div class="modal-dialog modal-lg modal-dialog-center">
+  <div class="modal-content">
+    <div class="modal-header">
+      <div class="modal-space">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">ｘ</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <% @change_unapprovals.each do | key, change_unapproval | %>
+        <%= form_with(model: @attendance, url: update_edit_one_month_approval_user_path, local: true, method: :patch) do |f| %>
+        <% user = User.find(key) %>
+        <h1 class="modal-title"><%= user.name %>からの1ヶ月分の勤怠変更申請</h1>
+        <table class="table table-bordered center">
+          <tr>
+            <th class="center" rowspan=3>日付</th>
+            <th class="center" rowspan=3>曜日</th>
+            <th class="center" colspan=4>変更前</th>
+            <th class="center" colspan=4>変更後</th>
+            <th class="center" rowspan=3>備考</th>
+            <th class="center" rowspan=3>指示者確認㊞</th>
+            <th class="center" rowspan=3>変更</th>
+            <th class="center" rowspan=3>勤怠を確認する</th>
+          </tr>
+          <tr>
+            <th class="center" colspan=2>出社</th>
+            <th class="center" colspan=2>退社</th>
+            <th class="center" colspan=2>出社</th>
+            <th class="center" colspan=2>退社</th>
+          </tr>
+          <tr>
+            <th class="center">時</th>
+            <th class="center">分</th>
+            <th class="center">時</th>
+            <th class="center">分</th>
+            <th class="center">時</th>
+            <th class="center">分</th>
+            <th class="center">時</th>
+            <th class="center">分</th>
+          </tr>
+          <% change_unapproval.each do | detail | %>
+          <%= f.fields_for "change_unapprovals[]", detail do |df| %>
+          <tr>
+            <td class="center"><%= l(detail.worked_on, format: :short) %></td>s
+            <td class="center"><%= $days_of_the_week[detail.worked_on.wday] %></td>
+            <td class="center"><%= l(detail.changed_started_at, format: :hour) %></td>
+            <td class="center"><%= l(detail.changed_started_at, format: :minute) %></td>
+            <td class="center"><%= l(detail.changed_finished_at, format: :hour) %></td>
+            <td class="center"><%= l(detail.changed_finished_at, format: :minute) %></td>
+            <td class="center"><%= l(detail.started_at, format: :hour) %></td>
+            <td class="center"><%= l(detail.started_at, format: :minute) %></td>
+            <td class="center"><%= l(detail.finished_at, format: :hour) %></td>
+            <td class="center"><%= l(detail.finished_at, format: :minute) %></td>
+            <td class="center"><%= detail.note %></td>
+            <td class="center"><%= df.select :change_approval, {'なし': 0, '申請中': 1, '承認': 2, '否認': 3}, { include_blank: '選択してください'}, { class: 'form-select' , required: true } %></td>
+            <td class="center"><label class="form-check-label" for="check"><%= df.check_box :check_box, { class: 'form-check-input', id: 'check' }, detail.check_box %></label></td>
+            <td class="center"><%= link_to "確認", user_path( detail.user_id ), class: "btn btn-primary" %></td>
+            <%= df.hidden_field :user_id, value: detail.user_id %>
+            <%= df.hidden_field :worked_on, value: detail.worked_on %>
+            <%= df.hidden_field :started_at, value: detail.started_at %>
+            <%= df.hidden_field :finished_at, value: detail.finished_at %>
+            <%= df.hidden_field :changed_started_at, value: detail.changed_started_at %>
+            <%= df.hidden_field :changed_finished_at, value: detail.changed_finished_at %>
+            <%= df.hidden_field :approval_authorizer, value: detail.approval_authorizer %>
+          </tr>
+          <% end %>
+          <% end %>
+        </table>
+        <div class-"center">
+          <%= f.submit "変更を送信する", class: "btn btn-primary btn-edit", id: "submit" %>
+        </div>
+        <% end %>
+        <% end %>
+      </div>
+    </div>
+  </div>
+</div>

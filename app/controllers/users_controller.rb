@@ -17,8 +17,16 @@ class UsersController < ApplicationController
   end
 
   def show
-    @approval = Apply.find_by( user_id: params[:id], month: @first_day.month )
+    # 承認に関する処理(管理者用)
+    @approval = Apply.where( authorizer: @user.id, mark: 1, month: @first_day.month ).first
     @unapprovals = Apply.where(mark: 1).where(authorizer: params[:id])
+    @change_unapprovals = Attendance.where(change_approval: 1).where(approval_authorizer: params[:id])
+    @overtime_unapprovals = Attendance.where(overtime_approval: 1).where(approval_authorizer: params[:id])
+    
+    # 承認ログ（ユーザー用）
+    @approval_logs = History.where( user_id: params[:id] )
+    
+    # 勤怠に関する処理
     @worked_sum = @attendances.where.not(started_at: nil).count
     respond_to do |format|
       format.html

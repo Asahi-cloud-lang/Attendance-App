@@ -1,3 +1,14 @@
-// Place all the styles related to the Attendances controller here.
-// They will automatically be included in application.css.
-// You can use Sass (SCSS) here: http://sass-lang.com/
+
+.select-field select {
+    width: 80px;
+    height: 25px;
+    display: inline-block;
+}
+.select-field-result {
+    width: 70px;
+    display: inline-block;
+    text-align: center;
+    background-color: #ddd;
+    padding: 3px;
+    margin: 10px 0;
+}

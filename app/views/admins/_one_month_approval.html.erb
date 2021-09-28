@@ -25,8 +25,9 @@
               <%= df.select :mark, {'なし': 0, '申請中': 1, '承認': 2, '否認': 3}, { include_blank: '選択してください'}, { class: 'form-select' , required: true } %>
             </td>
             <td class="center middle">
-              <%= df.check_box :month, { class: 'form-check-input', id: 'check' }, detail.month %>
-              <%= df.check_box :user_name, { class: 'form-check-input', id: 'check' }, detail.user_name %>
+              <%= df.check_box :check_box, { class: 'form-check-input', id: 'check' }, detail.check_box %>
+              <%= df.hidden_field :user_name, value: detail.user_name %>
+              <%= df.hidden_field :month, value: detail.month %>
             </td>
             </td>
             <td class="center middle">

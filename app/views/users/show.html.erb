@@ -29,10 +29,18 @@
     <% if @unapprovals.count >=1 %>
       <span class="text-danger"><%= link_to "【所属長承認申請のお知らせ】", one_month_approval_user_path(@user), class: "text-danger", remote: true %>　<%= @unapprovals.count %>件の通知があります</span><br>
     <% else %> 
-      <%= link_to "【所属長承認申請のお知らせ】", one_month_approval_user_path(@user) %><br>
+      <div>【所属長承認申請のお知らせ】</div>
     <% end %>
-    <%= link_to "【勤怠変更申請のお知らせ】", attendance_change_approval_user_path(@user) %><br>
-    <%= link_to "【残業申請のお知らせ】", overtime_approval_user_path(@user) %>
+    <% if @change_unapprovals.count >= 1 %>
+      <span class="text-danger"><%= link_to "【勤怠変更申請のお知らせ】", edit_one_month_approval_user_path(@user), class: "text-danger", remote: true %><%= @change_unapprovals.count %>件の通知があります</span><br>
+    <% else %>
+      <div>【勤怠変更申請のお知らせ】</div>
+    <% end %>
+    <% if @overtime_unapprovals.count >= 1 %>
+      <span class="text-danger"><%= link_to "【残業申請のお知らせ】", overtime_approval_user_path(@user) , class: "text-danger", remote: true %><%= @overtime_unapprovals.count %>件の通知があります</span><br>
+    <% else %>
+      <div>【残業申請のお知らせ】</div>
+    <% end %>
   </div>
   <% end %>
   <div>
@@ -40,7 +48,7 @@
     <%= link_to "CSV出力", user_path(format: :csv), class: "btn btn-primary" %>
   </div>
   <div>
-    <%= link_to "勤怠修正ログ", attendances_edit_one_month_user_path(date: @first_day), class: "btn btn-primary" %>
+    <%= link_to "勤怠修正ログ（承認済）", attendances_log_user_path(@user), class: "btn btn-primary",  remote: true %>
   </div>
 </div>
 
@@ -79,11 +87,13 @@
     <% @attendances.each do |day| %>
       <tr>
         <td>
-          <% if $days_of_the_week[day.worked_on.wday] == "土" || $days_of_the_week[day.worked_on.wday] == "日" %>
-          <% elsif day.overtime_approval = "false" %>
-            <%= link_to "残業申請", attendances_overtime_user_path(day), class: "btn btn-primary" %>
-          <% else %>
-            <span class="btn btn-primary">承認済み</span>
+          <% if day.started_at.present? %>
+            <% if $days_of_the_week[day.worked_on.wday] == "土" || $days_of_the_week[day.worked_on.wday] == "日" %>
+            <% elsif day.overtime_approval == 2  %>
+              <span class="btn btn-primary">承認なし</span>
+            <% else %>
+              <%= link_to "残業申請", attendances_overtime_user_path(@user,day.worked_on), class: "btn btn-primary" %>
+            <% end %>
           <% end %>
         </td>
         <td><%= l(day.worked_on, format: :short) %></td>
@@ -121,10 +131,29 @@
         </td>
         <td></td>
         <td><%= day.note %></td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
+        <td><%= l(day.scheduled_end_time, format: :hour) if day.scheduled_end_time.present? %></td>
+        <td><%= l(day.scheduled_end_time, format: :minute) if day.scheduled_end_time.present? %></td>
+        <td><%= day.note %></td>
+        <td>
+          <% if day.overtime_approval == "2" %>
+            <span class="text-success">残業承認済</span>
+          <% elsif day.overtime_approval == "3" %>
+            <span class="text-danger">残業否認</span>
+          <% elsif day.overtime_approval == "1" %>
+            <span class="text-info">残業申請中</span>
+          <% else %>
+            <span class="text-secondary"></span>
+          <% end %>
+          <% if day.change_approval == "2" %>
+            <span class="text-success">勤怠編集承認済</span>
+          <% elsif day.change_approval == "3" %>
+            <span class="text-danger">勤怠編集否認</span>
+          <% elsif day.change_approval == "1" %>
+            <span class="text-info">勤怠編集申請中</span>
+          <% else %>
+            <span class="text-secondary"></span>
+          <% end %>
+        </td>
       </tr>
     <% end %>
     </tbody>
@@ -138,7 +167,9 @@
         <td colspan=5></td>
         <td class="table-padding table-space">
           所属長承認　
-          <% if @approval.mark == 0 %>
+          <% if @approval == nil  %>
+            <span>未申請</span>
+          <% elsif @approval.mark == 2 %>
             <span class="text-primary">承認済</span>
           <% else %>
             <span class="text-danger">未承認</span>
@@ -161,3 +192,6 @@
 
 <!--モーダルウインドウ表示-->
 <div id="one_month_approval" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true"></div>
+<div id="edit_one_month_approval" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true"></div>
+<div id="overtime_approval" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true"></div>
+<div id="approval_log" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true"></div>
