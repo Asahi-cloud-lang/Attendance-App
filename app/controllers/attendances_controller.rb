@@ -1,5 +1,5 @@
 class AttendancesController < ApplicationController
-  before_action :set_user, only: [:edit_one_month, :update_one_month, :overtime, :approval_log, :destroy_approval_log]
+  before_action :set_user, only: [:edit_one_month, :update_one_month, :overtime, :approval_log, :overtime_log, :destroy_approval_log]
   before_action :logged_in_user, only: [:update, :edit_one_month, :overtime]
   before_action :set_one_month, only: [:edit_one_month, :overtime]
 
@@ -10,7 +10,8 @@ class AttendancesController < ApplicationController
     @attendance = Attendance.find(params[:id])
     # 出勤時間が未登録であることを判定します。
     if @attendance.started_at.nil?
-      if @attendance.update_attributes(started_at: Time.current.change(sec: 0))
+      @attendance.started_at = Time.current.change(sec: 0)
+      if @attendance.save(:validate => false)
         flash[:info] = "おはようございます！"
       else
         flash[:danger] = UPDATE_ERROR_MSG
@@ -66,6 +67,26 @@ class AttendancesController < ApplicationController
         if item[:check_box] == "on"
           attendance.update_attributes!(item)
           attendance.update_attributes!(overtime_approval: 1)
+          # すでにlogがある場合
+          if approval_log = History.find_by( log_worked_on: item[:worked_on], user_id: item[:user_id] )
+            approval_log.log_scheduled_end_time = item[:scheduled_end_time]
+            approval_log.approval_authorizer = item[:approval_authorizer]
+            approval_log.overtime_approval = 1
+            approval_log.overtime_note = item[:overtime_note]
+            approval_log.user_id = item[:user_id]
+            approval_log.save
+          # ログがない場合は新規作成
+          else
+            approval_log = History.new
+            approval_log.log_worked_on = item[:worked_on]
+            approval_log.user_id = item[:user_id]
+            approval_log.approval_authorizer = item[:approval_authorizer]
+            approval_log.log_scheduled_end_time = item[:scheduled_end_time]
+            approval_log.overtime_approval = 1
+            approval_log.overtime_note = item[:overtime_note]
+            approval_log.user_id = item[:user_id]
+            approval_log.save
+          end
           flash[:success] = "残業申請しました。"
         end
       end
@@ -77,7 +98,7 @@ class AttendancesController < ApplicationController
     @day = params[:format].to_date
   end
   
-  # ログ収集
+  # 勤怠修正ログ収集
   def approval_log
     @today = Date.today
     @year = @today.year
@@ -115,22 +136,60 @@ class AttendancesController < ApplicationController
     end
   end
   
+  # 残業申請ログ収集
+  def overtime_log
+    @today = Date.today
+    @year = @today.year
+    @prev_year = @today.prev_year.year
+    @next_year = @today.next_year.year
+    @overtime_logs = History.where( user_id: params[:id] )
+
+    # 絞り込み検索機能
+    # 年月で絞り込みをかけた時
+    if params[:year] && params[:month]
+      year = params[:year]
+      month = params[:month]
+      if month.to_i < 10
+        @overtime_logs = History.where( user_id: params[:id] ).where("log_worked_on LIKE ?", "%#{year}%").where("log_worked_on LIKE ?", "%0#{month}-%")
+      else
+        @overtime_logs = History.where( user_id: params[:id] ).where("log_worked_on LIKE ?", "%#{year}%").where("log_worked_on LIKE ?", "%#{month}-%")
+      end
+    end
+    # 年で絞り込みをかけた時
+    if params[:year].present?
+      unless params[:month].present?
+        year = params[:year]
+        @overtime_logs = History.where( user_id: params[:id] ).where("log_worked_on LIKE ?", "%#{year}%")
+      end
+    # 月で絞り込みをかけた時
+    elsif params[:month].present?
+      unless params[:year].present?
+        month = params[:month]
+        if month.to_i < 10
+          @overtime_logs = History.where( user_id: params[:id] ).where("log_worked_on LIKE ?", "%#{@year}%").where("log_worked_on LIKE ?", "%0#{month}-%")
+        else
+          @overtime_logs = History.where( user_id: params[:id] ).where("log_worked_on LIKE ?", "%#{@year}%").where("log_worked_on LIKE ?", "%#{month}-%")
+        end
+      end
+    end
+  end
+  
   # ログ削除
   def destroy_approval_log
     @approval_logs = History.where( user_id: params[:id] )
     @approval_logs.destroy_all
-    flash[:success] = "#{@user.name}の勤怠ログを削除しました。"
+    flash[:success] = "#{@user.name}のログを削除しました。"
     redirect_to user_url(@user)
   end
 
   private
     # 1ヶ月分の勤怠情報を扱います。
     def attendances_params
-      params.require(:user).permit(attendances: [:started_at, :finished_at, :note])[:attendances]
+      params.require(:user).permit(attendances: [:started_at, :finished_at, :note, :approval_authorizer])[:attendances]
     end
     
     # 残業の勤怠情報を扱います。
     def overtimes_params
-      params.require(:user).permit(attendances: [:scheduled_end_time, :note, :approval_authorizer, :check_box])[:attendances]
+      params.require(:user).permit(attendances: [:scheduled_end_time, :note, :approval_authorizer, :overtime_approval, :check_box, :user_id, :worked_on, :overtime_note])[:attendances]
     end
 end

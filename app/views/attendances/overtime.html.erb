@@ -8,7 +8,7 @@
           <th>日付</th>
           <th>曜日</th>
           <th>終了予定時間</th>
-          <th>変更</th>
+          <th>翌日</th>
           <th>業務処理内容</th>
           <th>指示者確認㊞</th>
         </tr>
@@ -23,10 +23,21 @@
               <td><%= $days_of_the_week[day.worked_on.wday] %></td>
               <td><%= attendance.time_field :scheduled_end_time, class: "form-control" %></td>
               <td><%= attendance.check_box :check_box, { class: 'form-check-input', id: 'check' }, day.check_box %></td>
-              <td><%= attendance.text_field :note, class: "form-control" %></td>
-              <td><%= attendance.select :approval_authorizer, {'上長A': 1, '上長B': 2, '上長C': 3}, { class: 'form-select' , required: true } %></td>
+              <td><%= attendance.text_field :overtime_note, class: "form-control" %></td>
+              <td>
+                <% if @user.id == 1 %>
+                  <%= attendance.select :approval_authorizer, { '上長B': 2, '上長C': 3 }, { class: 'form-select' , required: true } %>
+                <% elsif @user.id == 2 %>
+                  <%= attendance.select :approval_authorizer, { '上長A': 1, '上長C': 3 }, { class: 'form-select' , required: true } %>
+                <% elsif @user.id == 3 %>
+                  <%= attendance.select :approval_authorizer, { '上長A': 1, '上長B': 2 }, { class: 'form-select' , required: true } %>
+                <% else %>
+                  <%= attendance.select :approval_authorizer, {'上長A': 1, '上長B': 2, '上長C': 3}, { class: 'form-select' , required: true } %>
+                <% end %>
+                </td>
               <%= attendance.hidden_field :overtime_approval, value: 1 %>
               <%= attendance.hidden_field :user_id, value: day.user_id %>
+              <%= attendance.hidden_field :worked_on, value: day.worked_on %>
             </tr>
           <% end %>
         <% end %>

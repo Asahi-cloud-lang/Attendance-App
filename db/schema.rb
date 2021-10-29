@@ -34,6 +34,7 @@ ActiveRecord::Schema.define(version: 20210923134532) do
     t.string "overtime_approval", default: "0"
     t.string "approval_authorizer", default: "1"
     t.string "note"
+    t.string "overtime_note"
     t.string "check_box"
     t.integer "user_id"
     t.datetime "created_at", null: false
@@ -42,7 +43,9 @@ ActiveRecord::Schema.define(version: 20210923134532) do
   end
 
   create_table "bases", force: :cascade do |t|
-    t.string "name"
+    t.string "base_id"
+    t.string "base_name"
+    t.string "base_kinds"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end
@@ -54,7 +57,11 @@ ActiveRecord::Schema.define(version: 20210923134532) do
     t.datetime "log_finished_at"
     t.datetime "log_changed_started_at"
     t.datetime "log_changed_finished_at"
+    t.string "overtime_approval", default: "0"
+    t.datetime "log_scheduled_end_time"
     t.string "approval_authorizer"
+    t.string "note"
+    t.string "overtime_note"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end
@@ -72,10 +79,10 @@ ActiveRecord::Schema.define(version: 20210923134532) do
     t.string "uid"
     t.string "employee_number"
     t.integer "base_id"
-    t.datetime "basic_time", default: "2021-09-29 00:00:00"
-    t.datetime "designated_work_start_time", default: "2021-09-29 00:00:00"
-    t.datetime "designated_work_end_time", default: "2021-09-29 09:00:00"
-    t.datetime "work_time", default: "2021-09-28 23:00:00"
+    t.datetime "basic_time", default: "2021-10-29 00:00:00"
+    t.datetime "designated_work_start_time", default: "2021-10-29 00:00:00"
+    t.datetime "designated_work_end_time", default: "2021-10-29 09:00:00"
+    t.datetime "work_time", default: "2021-10-28 23:00:00"
     t.index ["email"], name: "index_users_on_email", unique: true
   end
 

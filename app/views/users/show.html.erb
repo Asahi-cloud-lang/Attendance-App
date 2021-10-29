@@ -3,9 +3,13 @@
   <table class="table table-bordered table-condensed user-table">
     <tr>
       <td>
-        <%= link_to "⇦", user_path(date: @first_day.prev_month), class: "btn btn-info" %>
+        <% unless params[:value] %>
+          <%= link_to "⇦", user_path(date: @first_day.prev_month), class: "btn btn-info" %>
+        <% end %>
         【<%= l(@first_day, format: :middle) %>】勤怠管理表
-        <%= link_to "⇨", user_path(date: @first_day.next_month), class: "btn btn-info" %>
+        <% unless params[:value] %>
+          <%= link_to "⇨", user_path(date: @first_day.next_month), class: "btn btn-info" %>
+        <% end %>
       </td>
       <td>
         指定勤務時間：<%= format_basic_info(@user.designated_work_start_time) %><br>
@@ -23,7 +27,9 @@
   </table>
 </div>
 
+<% unless params[:value] %>
 <div class="btn-admin">
+  
   <% if admin? %>
   <div>
     <% if @unapprovals.count >=1 %>
@@ -43,6 +49,15 @@
     <% end %>
   </div>
   <% end %>
+
+  <div class="overtime_approval_results">
+    <% if @overtime_approval_results.count >= 1 %>
+      <span class="text-danger"><%= link_to "【残業申請のお知らせ】", overtimes_log_user_path(@user), class: "text-danger",remote: true %><%= @overtime_approval_results.count %>件の通知があります</span>
+    <% else %>
+      <span class="text-primary">【残業申請のお知らせ】</span>
+    <% end %>
+  </div>
+  
   <div>
     <%= link_to "勤怠を編集", attendances_edit_one_month_user_path(date: @first_day), class: "btn btn-primary" %>
     <%= link_to "CSV出力", user_path(format: :csv), class: "btn btn-primary" %>
@@ -51,6 +66,7 @@
     <%= link_to "勤怠修正ログ（承認済）", attendances_log_user_path(@user), class: "btn btn-primary",  remote: true %>
   </div>
 </div>
+<% end %>
 
 <div>
   <table class="table table-bordered table-condensed table-hover" id="table-attendances">
@@ -136,20 +152,74 @@
         <td><%= day.note %></td>
         <td>
           <% if day.overtime_approval == "2" %>
-            <span class="text-success">残業承認済</span>
+            <span class="text-success">
+              残業承認済
+              <% if day.approval_authorizer == "1" %>
+                (上長Aにて承認)
+              <% elsif day.approval_authorizer == "2" %>
+                (上長Bにて承認)
+              <% elsif day.approval_authorizer == "3" %>
+                (上長Cにて承認)
+              <% end %>
+            </span><br>
           <% elsif day.overtime_approval == "3" %>
-            <span class="text-danger">残業否認</span>
+            <span class="text-danger">
+              残業否認
+              <% if day.approval_authorizer == "1" %>
+                (上長Aにて否認)
+              <% elsif day.approval_authorizer == "2" %>
+                (上長Bにて否認)
+              <% elsif day.approval_authorizer == "3" %>
+                (上長Cにて否認)
+              <% end %>
+            </span><br>
           <% elsif day.overtime_approval == "1" %>
-            <span class="text-info">残業申請中</span>
+            <span class="text-info">
+              残業申請中
+            <% if day.approval_authorizer == "1" %>
+                (上長Aに申請中)
+              <% elsif day.approval_authorizer == "2" %>
+                (上長Bに申請中)
+              <% elsif day.approval_authorizer == "3" %>
+                (上長Cに申請中)
+              <% end %><br>
+            </span>
           <% else %>
             <span class="text-secondary"></span>
           <% end %>
           <% if day.change_approval == "2" %>
-            <span class="text-success">勤怠編集承認済</span>
+            <span class="text-success">
+              勤怠編集承認済
+              <% if day.approval_authorizer == "1" %>
+                (上長Aにて承認)
+              <% elsif day.approval_authorizer == "2" %>
+                (上長Bにて承認)
+              <% elsif day.approval_authorizer == "3" %>
+                (上長Cにて承認)
+              <% end %>
+            </span>
           <% elsif day.change_approval == "3" %>
-            <span class="text-danger">勤怠編集否認</span>
+            <span class="text-danger">
+              勤怠編集否認
+              <% if day.approval_authorizer == "1" %>
+                (上長Aにて否認)
+              <% elsif day.approval_authorizer == "2" %>
+                (上長Bにて否認)
+              <% elsif day.approval_authorizer == "3" %>
+                (上長Cにて否認)
+              <% end %>
+            </span>
           <% elsif day.change_approval == "1" %>
-            <span class="text-info">勤怠編集申請中</span>
+            <span class="text-info">
+              勤怠編集申請中
+              <% if day.approval_authorizer == "1" %>
+                (上長Aに申請中)
+              <% elsif day.approval_authorizer == "2" %>
+                (上長Bに申請中)
+              <% elsif day.approval_authorizer == "3" %>
+                (上長Cに申請中)
+              <% end %>
+            </span>
           <% else %>
             <span class="text-secondary"></span>
           <% end %>
@@ -167,21 +237,26 @@
         <td colspan=5></td>
         <td class="table-padding table-space">
           所属長承認　
-          <% if @approval == nil  %>
+          <% if @user_approval == nil  %>
             <span>未申請</span>
-          <% elsif @approval.mark == 2 %>
-            <span class="text-primary">承認済</span>
-          <% else %>
-            <span class="text-danger">未承認</span>
+          <% elsif @user_approval.mark == "1" %>
+            <span class="text-primary">申請中</span>
+          <% elsif @user_approval.mark == "2" %>
+            <span class="text-success">承認済</span>
+          <% elsif @user_approval.mark == "3" %>
+            <span class="text-danger">否認</span>
           <% end %>
           <br>
           <%= form_with( url: request_one_month_approval_user_path( month: @first_day.month ),local: true, method: :patch ) do |f| %>
-            <select name="authorizer">
-              <option>管理者を選択してください</option>
-              <option value="1">上長A</option>
-              <option value="2">上長B</option>
-              <option value="3">上長C</option>
-            </select><br>
+            <% if @user.id == 1 %>
+              <%= f.select :approval_authorizer, { '上長B': 2, '上長C': 3 }, { :include_blank => "選択してください" }, { class: 'form-select' , required: true } %><br>
+            <% elsif @user.id == 2 %>
+              <%= f.select :approval_authorizer, { '上長A': 1, '上長C': 3 }, { :include_blank => "選択してください" }, { class: 'form-select' , required: true } %><br>
+            <% elsif @user.id == 3 %>
+              <%= f.select :approval_authorizer, { '上長A': 1, '上長B': 2 }, { :include_blank => "選択してください" }, { class: 'form-select' , required: true } %><br>
+            <% else %>
+              <%= f.select :approval_authorizer, {'上長A': 1, '上長B': 2, '上長C': 3}, { :include_blank => "選択してください" }, { class: 'form-select' , required: true } %><br>
+            <% end %>
             <%= f.submit "申請", class: "btn btn-primary btn-edit" %>
           <% end %>
         </td>
@@ -195,3 +270,4 @@
 <div id="edit_one_month_approval" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true"></div>
 <div id="overtime_approval" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true"></div>
 <div id="approval_log" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true"></div>
+<div id="overtime_log" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true"></div>

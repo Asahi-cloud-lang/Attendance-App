@@ -3,7 +3,7 @@ require 'csv'
 class UsersController < ApplicationController
   before_action :set_user, only: [:show, :edit, :update, :destroy, :edit_basic_info, :update_basic_info]
   before_action :logged_in_user, only: [:index, :edit, :update, :destroy, :edit_basic_info, :update_basic_info]
-  before_action :correct_user, only: [:edit, :update]
+  before_action :correct_user, only: [:edit, :update, :show, :update_basic_info]
   before_action :admin_user, only: [:destroy, :edit_basic_info, :update_basic_info]
   before_action :set_one_month, only: :show
   before_action :set_approval, only: :show
@@ -22,9 +22,13 @@ class UsersController < ApplicationController
     @unapprovals = Apply.where(mark: 1).where(authorizer: params[:id])
     @change_unapprovals = Attendance.where(change_approval: 1).where(approval_authorizer: params[:id])
     @overtime_unapprovals = Attendance.where(overtime_approval: 1).where(approval_authorizer: params[:id])
+
+    # 承認申請に関する処理（ユーザー用）
+    @user_approval = Apply.where( user_id: params[:id], month: @first_day.month ).first
     
     # 承認ログ（ユーザー用）
     @approval_logs = History.where( user_id: params[:id] )
+    @overtime_approval_results = History.where(overtime_approval: 3).where(user_id: params[:id]).or(History.where(overtime_approval: 1).where(user_id: params[:id]))
     
     # 勤怠に関する処理
     @worked_sum = @attendances.where.not(started_at: nil).count
@@ -42,7 +46,28 @@ class UsersController < ApplicationController
       csv << header
 
       attendances.each do |day|
-        values = [day.worked_on,day.started_at,day.finished_at,day.note]
+        # 
+        if day.change_approval == "0" || day.change_approval == "2"
+          if day.started_at
+            started_at = day.started_at.strftime("%H:%M")
+          else
+            started_at = day.started_at
+          end
+        else
+          started_at = ""
+        end
+        # 日付のフォーマット変換
+        if day.change_approval == "0" || day.change_approval == "2"
+          if day.finished_at
+            finished_at = day.finished_at.strftime("%H:%M")
+          else
+            finished_at = day.finished_at
+          end
+        else
+          finished_at = ""
+        end
+        # CSV出力する値を格納
+        values = [day.worked_on,started_at,finished_at,day.note]
         csv << values
       end
 

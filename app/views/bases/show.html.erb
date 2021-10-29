@@ -17,7 +17,7 @@
       <td class="middle"><%= @user.base_id %></td>
       <td class="middle">
         <% if @base %>
-          <%= @base.name %>
+          <%= @base.base_name %>
         <% else %>
           拠点情報なし
         <% end %>
@@ -29,8 +29,9 @@
 </table>
 
 <div class="base_add_frame">
-  <button class="btn btn-primary"><%= link_to "拠点情報追加", bases_edit_user_path(@user), remote: true %></button>
+  <button class="btn btn-primary"><%= link_to "拠点情報追加", bases_new_user_path(@user), remote: true %></button>
 </div>
 
 <!--モーダルウインドウ表示-->
 <div id="edit" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true"></div>
+<div id="new" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true"></div>

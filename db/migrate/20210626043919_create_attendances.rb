@@ -11,6 +11,7 @@ class CreateAttendances < ActiveRecord::Migration[5.1]
       t.string :overtime_approval, default: 0
       t.string :approval_authorizer, default: 1
       t.string :note
+      t.string :overtime_note
       t.string :check_box, defalut: "true"
       t.references :user, foreign_key: true
 

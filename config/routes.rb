@@ -16,7 +16,9 @@ Rails.application.routes.draw do
     member do
       # 拠点関連
       get 'bases/edit', to: 'bases#edit'
+      get 'bases/new', to: 'bases#new'
       get 'bases', to: 'bases#show'
+      post 'bases', to: 'bases#create'
       patch 'bases', to: 'bases#update'
       delete 'bases', to: 'bases#destroy'
       
@@ -36,6 +38,7 @@ Rails.application.routes.draw do
       # ログ
       get 'attendances/log', to: 'attendances#approval_log'
       delete 'attendances/log', to: 'attendances#destroy_approval_log'
+      get 'overtimes/log', to: 'attendances#overtime_log'
       
       # 承認関連
 

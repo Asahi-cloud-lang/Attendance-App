@@ -24,11 +24,11 @@ User.create!(name: "上長C",
              superior: true,
              admin: true)
              
-Base.create!(name: "拠点A")
+Base.create!(base_name: "拠点A")
 
-Base.create!(name: "拠点B")
+Base.create!(base_name: "拠点B")
 
-Base.create!(name: "拠点C")
+Base.create!(base_name: "拠点C")
 
 
 60.times do |n|

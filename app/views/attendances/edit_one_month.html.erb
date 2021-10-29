@@ -33,7 +33,17 @@
                 <% end %>
               </td>
               <td><%= attendance.text_field :note, class: "form-control" %></td>
-              <td><%= attendance.select :approval_authorizer, {'上長A': 1, '上長B': 2, '上長C': 3}, { class: 'form-select' , required: true } %></td>
+              <td>
+                <% if @user.id == 1 %>
+                  <%= attendance.select :approval_authorizer, { '上長B': 2, '上長C': 3 }, { class: 'form-select' , required: true } %>
+                <% elsif @user.id == 2 %>
+                  <%= attendance.select :approval_authorizer, { '上長A': 1, '上長C': 3 }, { class: 'form-select' , required: true } %>
+                <% elsif @user.id == 3 %>
+                  <%= attendance.select :approval_authorizer, { '上長A': 1, '上長B': 2 }, { class: 'form-select' , required: true } %>
+                <% else %>
+                  <%= attendance.select :approval_authorizer, {'上長A': 1, '上長B': 2, '上長C': 3}, { class: 'form-select' , required: true } %>
+                <% end %>
+              </td>
             </tr>
           <% end %>
         <% end %>

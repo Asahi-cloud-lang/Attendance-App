@@ -63,6 +63,33 @@ class AdminsController < ApplicationController
       if value[:check_box] == "on"
         approval = Attendance.find_by( worked_on: value[:worked_on], user_id: value[:user_id] )
         approval.overtime_approval = value[:overtime_approval]
+
+        # 残業ログにも情報を保存
+      
+        # 残業申請が承認 or 否認された場合
+        if value[:overtime_approval] = 2 || value[:overtime_approval] = 3
+          # すでにlogがある場合
+          if approval_log = History.find_by( log_worked_on: value[:worked_on], user_id: value[:user_id] )
+            approval_log.log_scheduled_end_time = value[:scheduled_end_time]
+            approval_log.approval_authorizer = value[:approval_authorizer]
+            approval_log.overtime_approval = approval.overtime_approval
+            approval_log.overtime_note = value[:overtime_note]
+            approval_log.user_id = value[:user_id]
+            approval_log.save
+          # ログがない場合は新規作成
+          else
+            approval_log = History.new
+            approval_log.log_worked_on = value[:worked_on]
+            approval_log.user_id = value[:user_id]
+            approval_log.approval_authorizer = value[:approval_authorizer]
+            approval_log.log_scheduled_end_time = value[:scheduled_end_time]
+            approval_log.overtime_approval = approval.overtime_approval
+            approval_log.overtime_note = value[:overtime_note]
+            approval_log.user_id = value[:user_id]
+            approval_log.save
+          end
+        end
+
         if approval.save
           flash[:success] = "処理致しました。"
         else

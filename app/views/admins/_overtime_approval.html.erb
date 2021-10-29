@@ -33,11 +33,14 @@
             <td class="center"><%= l(detail.scheduled_end_time, format: :hour) %></td>
             <td class="center"><%= l(detail.scheduled_end_time, format: :minute) %></td>
             <td class="center"><label class="form-check-label" for="check"><%= df.check_box :check_box, { class: 'form-check-input', id: 'check' }, detail.check_box %></label></td>
-            <td class="center"><%= detail.note %></td>
+            <td class="center"><%= detail.overtime_note %></td>
             <td class="center"><%= df.select :overtime_approval, {'なし': 0, '申請中': 1, '承認': 2, '否認': 3}, { include_blank: '選択してください'}, { class: 'form-select' , required: true } %></td>
-            <td class="center"><%= link_to "確認", user_path( detail.user_id ), class: "btn btn-primary" %></td>
+            <td class="center"><%= link_to "確認", user_path( detail.user_id, value: "hide" ), class: "btn btn-primary" %></td>
             <%= df.hidden_field :worked_on, value: detail.worked_on %>
             <%= df.hidden_field :user_id, value: detail.user_id %>
+            <%= df.hidden_field :scheduled_end_time, value: detail.scheduled_end_time %>
+            <%= df.hidden_field :approval_authorizer, value: detail.approval_authorizer %>
+            <%= df.hidden_field :overtime_note, value: detail.overtime_note %>
           </tr>
           <% end %>
           <% end %>

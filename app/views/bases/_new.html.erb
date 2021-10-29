@@ -4,26 +4,26 @@
       <button type="button" class="close" data-dismiss="modal" aria-label="Close">
         <span aria-hidden="true">ｘ</span>
       </button>
-      <h1 class="modal-title">拠点情報編集</h1>
+      <h1 class="modal-title">拠点情報追加</h1>
     </div>
     <div class="modal-body">
       <div class="row">
         <div class="col-md-6 col-md-offset-3">
-          <%= form_with(model: @base, url: bases_user_path(@user), local: true, method: :patch) do |f| %>
+          <%= form_with(model: @base, url: bases_user_path(@user), local: true ) do |f| %>
             <%= render 'shared/error_messages', object: @user %>
 
             <%= f.label "氏名", class: "label-base-edit" %>
             <p><%= @user.name %></p>
             
-            <%= f.label :base_id, class: "label-base-edit" %>
+            <%= f.label "拠点番号", class: "label-base-edit" %>
             <p><%= f.text_field :base_id, class: "form-control" %></p>
             
-            <%= f.label :base_name, class: "label-base-edit" %>
+            <%= f.label "拠点名", class: "label-base-edit" %>
             <p><%= f.text_field :base_name, class: "form-control" %></p>
-            
-            <%= f.label :base_kinds, class: "label-base-edit" %>
+
+            <%= f.label "拠点種類", class: "label-base-edit" %>
             <p><%= f.text_field :base_kinds, class: "form-control" %></p>
-            
+
             <div class="center">
               <%= f.submit "送信", class: "btn btn-primary btn-edit" %>
               <button type="button" class="btn btn-default btn-edit" data-dismiss="modal">

@@ -7,10 +7,10 @@
         </button>
       </div>
       <div class="modal-body">
-        <h1>勤怠ログ</h1>
+        <h1>残業申請ログ</h1>
         <div><button><%= link_to "リセット", attendances_log_user_path(@user), method: :delete ,data: { confirm: "削除してよろしいですか？" } %></button></div>
         <!--ここから先が検索機能の実装部-->
-        <%= form_tag( attendances_log_user_path(@user), method: 'get', action: 'approval_log' , remote: true ) do %>
+        <%= form_tag( overtimes_log_user_path(@user), method: 'get', action: 'overtime_log' , remote: true ) do %>
           <div class="select-field">
             <%= select_tag(:year, options_for_select([[ @prev_year, @prev_year ],[ @year, @year ],[ @next_year, @next_year ]]), { include_blank: '年'}) %>
             <% if params[:year].present? %>
@@ -31,33 +31,39 @@
             <tr>
               <th>日付</th>
               <th>曜日</th>
-              <th>変更前出社時間</th>
-              <th>変更前出社時間</th>
-              <th>変更後出社</th>
-              <th>変更後出社</th>
-              <th>承認者</th>
-              <th>承認日</th>
+              <th>終了予定時間</th>
+              <th>業務処理内容</th>
+              <th>承認ステータス</th>
+              <th>指示者</th>
+              <th>確認日</th>
             </tr>
           </thead>
           <tbody>
-            <% @approval_logs.each do |log| %>
+            <% @overtime_logs.each do |log| %>
             <tr>
               <td><%= l(log.log_worked_on, format: :short) %></td>
               <td><%= $days_of_the_week[log.log_worked_on.wday] %></td>
-              <td><%= l(log.log_changed_started_at, format: :time) %></td>
-              <td><%= l(log.log_changed_finished_at, format: :time) %></td>
-              <td><%= l(log.log_started_at, format: :time) %></td>
-              <td><%= l(log.log_finished_at, format: :time) %></td>
+              <td><%= l(log.log_scheduled_end_time, format: :time) %></td>
+              <td><%= log.overtime_note %></td>
               <td>
-                <% if log.approval_authorizer = 1 %>
+                <% if log.overtime_approval == "1" %>
+                  <span class="text-primary">申請中</span>
+                <% elsif log.overtime_approval == "2" %>
+                  <span class="text-success">承認済</span>
+                <% elsif log.overtime_approval == "3" %>  
+                  <span class="text-danger">否認</span>
+                <% end %>
+              </td>
+              <td>
+                <% if log.approval_authorizer == "1" %>
                   上長A
-                <% elsif log.approval_authorizer = 2 %>
+                <% elsif log.approval_authorizer == "2" %>
                   上長B
-                <% elsif log.approval_authorizer = 3 %>  
+                <% elsif log.approval_authorizer == "3" %>  
                   上長C
                 <% end %>
               </td>
-              <td><%= l(log.created_at, format: :day) %></td>
+              <td><%= l(log.updated_at, format: :day) %></td>
             </tr>
             <% end %>
           </tbody>
