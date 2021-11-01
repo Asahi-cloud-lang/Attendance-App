@@ -21,7 +21,6 @@ User.create!(name: "上長C",
              uid: 3,
              password: "password",
              password_confirmation: "password",
-             superior: true,
              admin: true)
              
 Base.create!(base_name: "拠点A")

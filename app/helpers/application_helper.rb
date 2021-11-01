@@ -14,4 +14,9 @@ module ApplicationHelper
   def admin?
     current_user.admin?
   end
+  
+  # 上長か確認
+  def superior?
+    current_user.superior?
+  end
 end
