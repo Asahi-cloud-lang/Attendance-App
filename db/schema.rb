@@ -13,7 +13,7 @@
 ActiveRecord::Schema.define(version: 20210923134532) do
 
   create_table "applies", force: :cascade do |t|
-    t.date "month"
+    t.string "month"
     t.string "mark", default: "0"
     t.integer "user_id"
     t.string "user_name"
@@ -79,10 +79,10 @@ ActiveRecord::Schema.define(version: 20210923134532) do
     t.string "uid"
     t.string "employee_number"
     t.integer "base_id"
-    t.datetime "basic_time", default: "2021-11-01 00:00:00"
-    t.datetime "designated_work_start_time", default: "2021-11-01 00:00:00"
-    t.datetime "designated_work_end_time", default: "2021-11-01 09:00:00"
-    t.datetime "work_time", default: "2021-10-31 23:00:00"
+    t.datetime "basic_time", default: "2021-11-04 00:00:00"
+    t.datetime "designated_work_start_time", default: "2021-11-04 00:00:00"
+    t.datetime "designated_work_end_time", default: "2021-11-04 09:00:00"
+    t.datetime "work_time", default: "2021-11-03 23:00:00"
     t.index ["email"], name: "index_users_on_email", unique: true
   end
 
