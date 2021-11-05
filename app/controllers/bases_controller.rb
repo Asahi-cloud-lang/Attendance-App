@@ -46,7 +46,6 @@ class BasesController < ApplicationController
       @base.save
     end
     @user.base_id = params[:base_id]
-    byebug
     if @user.save
       flash[:success] = "拠点情報を更新しました。"
       redirect_to bases_user_path(@user)
