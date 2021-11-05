@@ -34,6 +34,11 @@ class AttendancesController < ApplicationController
     ActiveRecord::Base.transaction do # トランザクションを開始します。
       attendances_params.each do |id, item|
         attendance = Attendance.find(id)
+        if item[:started_at].present? && item[:finished_at].present?
+          attendance.update_attributes!(changed_started_at: item[:started_at])
+          attendance.update_attributes!(changed_finished_at: item[:finished_at])
+          attendance.update_attributes!(change_approval: 1)
+        end
         # 出勤時間と退勤時間が入力されている場合
         if attendance.started_at.present? && attendance.finished_at.present?
           # 事前に変更前の出勤情報、退勤情報を移動
