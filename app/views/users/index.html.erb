@@ -11,16 +11,16 @@
 <div class="col-md-10 col-md-offset-1">
   <div class="table-hover table-width" id="table-users">
     <% @users.each do |user| %>
+    <% if current_user.admin? && !current_user?(user) %>
     <div class="table-frame table-margin table-block">
       <p>
         <%= user.name %>
       </p>
       <p>
-      <% if current_user.admin? && !current_user?(user) %>
-        <p>
-          | <%= link_to "削除", user, method: :delete, data: { confirm: "削除してよろしいですか？" }, class: "btn btn-primary" %>
-        </p>
-      <% end %>
+      <p>
+        | <%= link_to "削除", user, method: :delete, data: { confirm: "削除してよろしいですか？" }, class: "btn btn-primary" %>
+      </p>
+    <% end %>
       <div>
         <% if current_user.admin? && !current_user?(user) %>
             <div class="table-edit-frame">

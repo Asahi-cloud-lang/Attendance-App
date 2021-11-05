@@ -19,9 +19,9 @@ class BasesController < ApplicationController
   
   def create
     @base = Base.new
-    @base.base_id = params[:base][:base_id]
-    @base.base_name = params[:base][:base_name]
-    @base.base_kinds = params[:base][:base_kinds]
+    @base.base_id = params[:base_id]
+    @base.base_name = params[:base_name]
+    @base.base_kinds = params[:base_kinds]
     if @base.save
       flash[:success] = "拠点情報を更新しました。"
       redirect_to bases_user_path(@user)
@@ -32,18 +32,19 @@ class BasesController < ApplicationController
   
   def update
     @base = Base.find_by( base_id: params[:base][:base_id] )
-    if @base
+    if @base.present?
+      @user.base_id = params[:base][:base_id]
+      @base.base_id = params[:base][:base_id]
       @base.base_name = params[:base][:base_name]
       @base.base_kinds = params[:base][:base_kinds]
       @base.save
     else
-      @base = Base.new
+      @user.base_id = params[:base][:base_id]
       @base.base_id = params[:base][:base_id]
       @base.base_name = params[:base][:base_name]
       @base.base_kinds = params[:base][:base_kinds]
       @base.save
     end
-    
     @user.base_id = params[:base][:base_id]
     if @user.save
       flash[:success] = "拠点情報を更新しました。"

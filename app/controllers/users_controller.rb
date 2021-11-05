@@ -121,8 +121,15 @@ class UsersController < ApplicationController
   end
   
   def import
-    User.import(params[:file])
-    redirect_to users_url
+    unless params[:file]
+      #ファイル添付がなかった時の処理
+      redirect_to users_url
+      flash[:danger] = "ファイルが添付されていません。"
+    else
+      #添付されていた時の処理。今のcodeをそのままここに収める
+      User.import(params[:file])
+      redirect_to users_url
+    end
   end
 
   private

@@ -23,11 +23,20 @@ User.create!(name: "上長C",
              password_confirmation: "password",
              admin: true)
              
-Base.create!(base_name: "拠点A")
-
-Base.create!(base_name: "拠点B")
-
-Base.create!(base_name: "拠点C")
+Base.create!(base_id: "1",
+             base_name: "拠点A",
+             base_kinds: "東京拠点",
+             )
+             
+Base.create!(base_id: "2",
+             base_name: "拠点B",
+             base_kinds: "大阪拠点",
+             )
+             
+Base.create!(base_id: "3",
+             base_name: "拠点C",
+             base_kinds: "京都拠点",
+             )
 
 
 60.times do |n|

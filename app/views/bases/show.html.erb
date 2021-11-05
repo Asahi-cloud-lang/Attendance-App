@@ -16,7 +16,7 @@
       <td><%= link_to "削除", bases_user_path(@user), method: :delete ,data: { confirm: "削除してよろしいですか？" }, class: "btn btn-primary" %></td>
       <td class="middle"><%= @user.base_id %></td>
       <td class="middle">
-        <% if @base %>
+        <% if @user.base_id %>
           <%= @base.base_name %>
         <% else %>
           拠点情報なし

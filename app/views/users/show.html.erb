@@ -51,10 +51,12 @@
   <% end %>
 
   <div class="overtime_approval_results">
-    <% if @overtime_approval_results.count >= 1 %>
-      <span class="text-danger"><%= link_to "【残業申請のお知らせ】", overtimes_log_user_path(@user), class: "text-danger",remote: true %><%= @overtime_approval_results.count %>件の通知があります</span>
-    <% else %>
-      <span class="text-primary">【残業申請のお知らせ】</span>
+    <% if admin? %>
+      <% if @overtime_approval_results.count >= 1 %>
+        <span class="text-danger"><%= link_to "【残業申請のお知らせ】", overtimes_log_user_path(@user), class: "text-danger",remote: true %><%= @overtime_approval_results.count %>件の通知があります</span>
+      <% else %>
+        <span class="text-primary">【残業申請のお知らせ】</span>
+      <% end %>
     <% end %>
   </div>
   
@@ -65,7 +67,18 @@
   <div>
     <%= link_to "勤怠修正ログ（承認済）", attendances_log_user_path(@user), class: "btn btn-primary",  remote: true %>
   </div>
+  <div>
+    <%= link_to "勤怠修正ログ（承認済）", attendances_log_user_path(@user), class: "btn btn-primary",  remote: true %>
+  </div>
 </div>
+<% end %>
+
+<% if superior? %>
+  <br>
+  <div>
+    <%= link_to "基本情報の更新", edit_user_path(params[:id]), class: "btn btn-primary" %>
+  </div>
+  <br>
 <% end %>
 
 <div>
@@ -103,14 +116,7 @@
     <% @attendances.each do |day| %>
       <tr>
         <td>
-          <% if day.started_at.present? %>
-            <% if $days_of_the_week[day.worked_on.wday] == "土" || $days_of_the_week[day.worked_on.wday] == "日" %>
-            <% elsif day.overtime_approval == 2  %>
-              <span class="btn btn-primary">承認なし</span>
-            <% else %>
-              <%= link_to "残業申請", attendances_overtime_user_path(@user,day.worked_on), class: "btn btn-primary" %>
-            <% end %>
-          <% end %>
+          <%= link_to "残業申請", attendances_overtime_user_path(@user,day.worked_on), class: "btn btn-primary" %>
         </td>
         <td><%= l(day.worked_on, format: :short) %></td>
         <td><%= $days_of_the_week[day.worked_on.wday] %></td>
