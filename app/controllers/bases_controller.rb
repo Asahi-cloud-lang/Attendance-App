@@ -10,7 +10,7 @@ class BasesController < ApplicationController
   
   def edit
     if @user.base_id
-      @base = Base.find( @user.base_id )
+      @base = Base.find_by( base_id: @user.base_id )
     end
   end
   
@@ -18,11 +18,39 @@ class BasesController < ApplicationController
   end
   
   def create
-    @base = Base.new
-    @base.base_id = params[:base_id]
-    @base.base_name = params[:base_name]
-    @base.base_kinds = params[:base_kinds]
-    if @base.save
+    if params[:base_id]
+      @base = Base.find_by( base_id: params[:base_id] )
+    end
+    if @base.present?
+      @user.base_id = params[:base_id]
+      @base.base_id = params[:base_id]
+      @base.base_name = params[:base_name]
+      @base.base_kinds = params[:base_kinds]
+      @base.save
+    elsif params[:base]
+      if @base = Base.find_by( base_id: params[:base][:base_id] )
+        @user.base_id = params[:base][:base_id]
+        @base.base_id = params[:base][:base_id]
+        @base.base_name = params[:base][:base_name]
+        @base.base_kinds = params[:base][:base_kinds]
+        @base.save
+      else
+        @base = Base.new
+        @user.base_id = params[:base][:base_id]
+        @base.base_id = params[:base][:base_id]
+        @base.base_name = params[:base][:base_name]
+        @base.base_kinds = params[:base][:base_kinds]
+        @base.save
+      end
+    else
+      @base = Base.new
+      @user.base_id = params[:base_id]
+      @base.base_id = params[:base_id]
+      @base.base_name = params[:base_name]
+      @base.base_kinds = params[:base_kinds]
+      @base.save
+    end
+    if @user.save
       flash[:success] = "拠点情報を更新しました。"
       redirect_to bases_user_path(@user)
     else
@@ -31,21 +59,39 @@ class BasesController < ApplicationController
   end
   
   def update
-    @base = Base.find_by( base_id: params[:base_id] )
+    if params[:base_id]
+      @base = Base.find_by( base_id: params[:base_id] )
+    end
     if @base.present?
       @user.base_id = params[:base_id]
       @base.base_id = params[:base_id]
       @base.base_name = params[:base_name]
       @base.base_kinds = params[:base_kinds]
       @base.save
+    elsif params[:base]
+      if @base = Base.find_by( base_id: params[:base][:base_id] )
+        @user.base_id = params[:base][:base_id]
+        @base.base_id = params[:base][:base_id]
+        @base.base_name = params[:base][:base_name]
+        @base.base_kinds = params[:base][:base_kinds]
+        @base.save
+      else
+        @base = Base.new
+        @user.base_id = params[:base][:base_id]
+        @base.base_id = params[:base][:base_id]
+        @base.base_name = params[:base][:base_name]
+        @base.base_kinds = params[:base][:base_kinds]
+        @base.save
+      end
     else
+      @base = Base.new
       @user.base_id = params[:base_id]
       @base.base_id = params[:base_id]
       @base.base_name = params[:base_name]
       @base.base_kinds = params[:base_kinds]
       @base.save
     end
-    @user.base_id = params[:base_id]
+    byebug
     if @user.save
       flash[:success] = "拠点情報を更新しました。"
       redirect_to bases_user_path(@user)

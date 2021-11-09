@@ -73,12 +73,14 @@
 </div>
 <% end %>
 
-<% if superior? %>
-  <br>
-  <div>
-    <%= link_to "基本情報の更新", edit_user_path(params[:id]), class: "btn btn-primary" %>
-  </div>
-  <br>
+<% unless params[:value] %>
+  <% if superior? %>
+    <br>
+    <div>
+      <%= link_to "基本情報の更新", edit_user_path(params[:id]), class: "btn btn-primary" %>
+    </div>
+    <br>
+  <% end %>
 <% end %>
 
 <div>
@@ -116,7 +118,9 @@
     <% @attendances.each do |day| %>
       <tr>
         <td>
-          <%= link_to "残業申請", attendances_overtime_user_path(@user,day.worked_on), class: "btn btn-primary" %>
+          <% unless params[:value] %>
+            <%= link_to "残業申請", attendances_overtime_user_path(@user,day.worked_on), class: "btn btn-primary" %>
+          <% end %>
         </td>
         <td><%= l(day.worked_on, format: :short) %></td>
         <td><%= $days_of_the_week[day.worked_on.wday] %></td>
@@ -129,7 +133,9 @@
         <td>
           <% if btn_text = attendance_state(day) %>
             <% if day.started_at.nil? %>
-              <%= link_to "#{btn_text}", user_attendance_path(@user, day), method: :patch, class: "btn btn-primary btn-attendance" %>
+              <% unless params[:value] %>
+                <%= link_to "#{btn_text}", user_attendance_path(@user, day), method: :patch, class: "btn btn-primary btn-attendance" %>
+              <% end %>
             <% end %>
           <% end %>
         <td>
@@ -141,7 +147,9 @@
         <td>
           <% if btn_text = attendance_state(day) %>
             <% if day.started_at.present? && day.finished_at.nil? %>
-              <%= link_to "#{btn_text}", user_attendance_path(@user, day), method: :patch, class: "btn btn-primary btn-attendance" %>
+              <% unless params[:value] %>
+                <%= link_to "#{btn_text}", user_attendance_path(@user, day), method: :patch, class: "btn btn-primary btn-attendance" %>
+              <% end %>
             <% end %>
           <% end %>
         </td>
@@ -152,9 +160,9 @@
           <% end %>
         </td>
         <td></td>
-        <td><%= day.note %></td>
         <td><%= l(day.scheduled_end_time, format: :hour) if day.scheduled_end_time.present? %></td>
         <td><%= l(day.scheduled_end_time, format: :minute) if day.scheduled_end_time.present? %></td>
+        <td></td>
         <td><%= day.note %></td>
         <td>
           <% if day.overtime_approval == "2" %>
@@ -253,17 +261,19 @@
             <span class="text-danger">否認</span>
           <% end %>
           <br>
-          <%= form_with( url: request_one_month_approval_user_path( month: @first_day.month ),local: true, method: :patch ) do |f| %>
-            <% if @user.id == 1 %>
-              <%= f.select :approval_authorizer, { '上長B': 2, '上長C': 3 }, { :include_blank => "選択してください" }, { class: 'form-select' , required: true } %><br>
-            <% elsif @user.id == 2 %>
-              <%= f.select :approval_authorizer, { '上長A': 1, '上長C': 3 }, { :include_blank => "選択してください" }, { class: 'form-select' , required: true } %><br>
-            <% elsif @user.id == 3 %>
-              <%= f.select :approval_authorizer, { '上長A': 1, '上長B': 2 }, { :include_blank => "選択してください" }, { class: 'form-select' , required: true } %><br>
-            <% else %>
-              <%= f.select :approval_authorizer, {'上長A': 1, '上長B': 2, '上長C': 3}, { :include_blank => "選択してください" }, { class: 'form-select' , required: true } %><br>
+          <% unless params[:value] %>
+            <%= form_with( url: request_one_month_approval_user_path( month: @first_day.month ),local: true, method: :patch ) do |f| %>
+              <% if @user.id == 1 %>
+                <%= f.select :approval_authorizer, { '上長B': 2, '上長C': 3 }, { :include_blank => "選択してください" }, { class: 'form-select' , required: true } %><br>
+              <% elsif @user.id == 2 %>
+                <%= f.select :approval_authorizer, { '上長A': 1, '上長C': 3 }, { :include_blank => "選択してください" }, { class: 'form-select' , required: true } %><br>
+              <% elsif @user.id == 3 %>
+                <%= f.select :approval_authorizer, { '上長A': 1, '上長B': 2 }, { :include_blank => "選択してください" }, { class: 'form-select' , required: true } %><br>
+              <% else %>
+                <%= f.select :approval_authorizer, {'上長A': 1, '上長B': 2, '上長C': 3}, { :include_blank => "選択してください" }, { class: 'form-select' , required: true } %><br>
+              <% end %>
+              <%= f.submit "申請", class: "btn btn-primary btn-edit" %>
             <% end %>
-            <%= f.submit "申請", class: "btn btn-primary btn-edit" %>
           <% end %>
         </td>
       </tr>
