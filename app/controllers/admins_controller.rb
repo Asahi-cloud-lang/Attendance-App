@@ -118,7 +118,7 @@ class AdminsController < ApplicationController
   def request_one_month_approval
     @approval = Apply.find_by( user_id: params[:id], month: params[:month].to_i )
     @approval.mark = 1
-    @approval.authorizer = params[:authorizer]
+    @approval.authorizer = params[:approval_authorizer]
     if @approval.save
       flash[:success] = "申請致しました。"
       redirect_to user_url
