@@ -10,7 +10,7 @@ class Attendance < ApplicationRecord
   validate :started_at_than_finished_at_fast_if_invalid
   
   # アップデート時には出勤・退勤時間どちらも存在する事
-  validate :started_at_is_invalid_without_a_finished_at, on: :update
+  validate :started_at_is_invalid_without_a_finished_at, on: :update_edit_one_month_approval
 
   def finished_at_is_invalid_without_a_started_at
     errors.add(:started_at, "が必要です") if started_at.blank? && finished_at.present?

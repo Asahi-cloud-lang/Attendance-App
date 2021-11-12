@@ -71,8 +71,8 @@ class AttendancesController < ApplicationController
       overtimes_params.each do |id, item|
         attendance = Attendance.find(id)
         if item[:check_box] == "on"
-          attendance.update_attributes!(item)
-          attendance.update_attributes!(overtime_approval: 1)
+          attendance.update_attributes(item)
+          attendance.update_attributes(overtime_approval: 1)
           # すでにlogがある場合
           if approval_log = History.find_by( log_worked_on: item[:worked_on], user_id: item[:user_id] )
             approval_log.log_scheduled_end_time = item[:scheduled_end_time]
