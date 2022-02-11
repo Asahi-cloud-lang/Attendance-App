@@ -70,7 +70,8 @@ class AttendancesController < ApplicationController
     ActiveRecord::Base.transaction do # トランザクションを開始します。
       overtimes_params.each do |id, item|
         attendance = Attendance.find(id)
-        if item[:check_box] == "on"
+        @today = Date.today.strftime('%Y-%m-%d')
+        if item['worked_on'] < @today && item[:check_box] == "on" || @today < item['worked_on'] 
           attendance.update_attributes(item)
           attendance.update_attributes(overtime_approval: 1)
           # すでにlogがある場合
