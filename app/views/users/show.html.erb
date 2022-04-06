@@ -52,23 +52,24 @@
     <% end %>
   </div>
   <% end %>
-
-  <div class="overtime_approval_results">
-    <% if admin? %>
-      <% if @overtime_approval_results.count >= 1 %>
-        <span class="text-danger"><%= link_to "【残業申請のログ確認】", overtimes_log_user_path(@user), class: "text-danger",remote: true %><%= @overtime_approval_results.count %>件の通知があります</span>
-      <% else %>
-        <span class="text-primary">【残業申請のログ確認】</span>
-      <% end %>
-    <% end %>
-  </div>
   
-  <div>
-    <%= link_to "勤怠を編集", attendances_edit_one_month_user_path(date: @first_day), class: "btn btn-primary" %>
-    <%= link_to "CSV出力", user_path(format: :csv), class: "btn btn-primary" %>
-  </div>
-  <div>
-    <%= link_to "勤怠修正ログ（承認済）", attendances_log_user_path(@user), class: "btn btn-primary",  remote: true %>
+  <div class="btn-admin-margin">
+    <div>
+      <%= link_to "勤怠を編集", attendances_edit_one_month_user_path(date: @first_day), class: "btn btn-primary" %>
+      <%= link_to "CSV出力", user_path(format: :csv), class: "btn btn-primary" %>
+    </div>
+    <div>
+      <%= link_to "勤怠修正ログ（承認済）", attendances_log_user_path(@user), class: "btn btn-primary",  remote: true %>
+    </div>
+    <div>
+      <% if admin? %>
+        <% if @overtime_approval_results.count >= 1 %>
+          <%= link_to "【残業申請のログ確認】", overtimes_log_user_path(@user), class: "btn btn-primary",remote: true %><span class="text-primary"><%= @overtime_approval_results.count %>件のログがあります</span>
+        <% else %>
+          <span>【残業申請のログ確認】</span>
+        <% end %>
+      <% end %>
+    </div>    
   </div>
 </div>
 <% end %>
