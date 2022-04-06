@@ -251,10 +251,17 @@
         <td></td>
         <td colspan=5></td>
         <td class="table-padding table-space">
-          所属長承認　
+          所属長承認
           <% if @user_approval == nil  %>
             <span>未申請</span>
           <% elsif @user_approval.mark == "1" %>
+            <% if @user_approval.authorizer == "1" %>
+              <span class="text-primary">上長Aに</span>
+            <% elsif @user_approval.authorizer == "2" %>
+              <span class="text-primary">上長Bに</span>
+            <% elsif @user_approval.authorizer == "3" %>
+              <span class="text-primary">上長Cに</span>
+            <% end %>
             <span class="text-primary">申請中</span>
           <% elsif @user_approval.mark == "2" %>
             <span class="text-success">承認済</span>
