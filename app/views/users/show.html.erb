@@ -33,20 +33,20 @@
   <% if admin? %>
   <div>
     <% if @unapprovals.count >=1 %>
-      <span class="text-danger">【所属長承認申請のお知らせ】<%= @unapprovals.count %>件の通知があります</span><br>
       <%= link_to "【所属長承認申請のお知らせ】", one_month_approval_user_path(@user), class: "btn btn-danger", remote: true %>
+      <span class="text-danger">【所属長承認申請のお知らせ】<%= @unapprovals.count %>件の通知があります</span><br>
     <% else %> 
       <div>【所属長承認申請のお知らせ】</div>
     <% end %>
     <% if @change_unapprovals.count >= 1 %>
-      <span class="text-danger">【勤怠変更申請のお知らせ】<%= @change_unapprovals.count %>件の通知があります</span><br>
       <%= link_to "【勤怠変更申請のお知らせ】", edit_one_month_approval_user_path(@user), class: "pb-3 btn btn-danger", remote: true %>
+      <span class="text-danger">【勤怠変更申請のお知らせ】<%= @change_unapprovals.count %>件の通知があります</span><br>
     <% else %>
       <div>【勤怠変更申請のお知らせ】</div>
     <% end %>
     <% if @overtime_unapprovals.count >= 1 %>
+      <%= link_to "【残業申請のお知らせ】", overtime_approval_user_path(@user) , class: "pb-3 btn btn-danger", remote: true %>
       <span class="text-danger">【残業申請のお知らせ】<%= @overtime_unapprovals.count %>件の通知があります</span><br>
-      <%= link_to "確認する", overtime_approval_user_path(@user) , class: "pb-3 btn btn-danger", remote: true %>
     <% else %>
       <div>【残業申請のお知らせ】</div>
     <% end %>
@@ -56,9 +56,9 @@
   <div class="overtime_approval_results">
     <% if admin? %>
       <% if @overtime_approval_results.count >= 1 %>
-        <span class="text-danger"><%= link_to "【残業申請のお知らせ】", overtimes_log_user_path(@user), class: "text-danger",remote: true %><%= @overtime_approval_results.count %>件の通知があります</span>
+        <span class="text-danger"><%= link_to "【残業申請のログ確認】", overtimes_log_user_path(@user), class: "text-danger",remote: true %><%= @overtime_approval_results.count %>件の通知があります</span>
       <% else %>
-        <span class="text-primary">【残業申請のお知らせ】</span>
+        <span class="text-primary">【残業申請のログ確認】</span>
       <% end %>
     <% end %>
   </div>
