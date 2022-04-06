@@ -18,7 +18,7 @@ class AdminsController < ApplicationController
 
   def update_edit_one_month_approval
     params[:change_unapprovals].each do |key, value|
-      if value[:check_box] == "on"
+      if value[:check_box] = 1
         approval = Attendance.find_by( worked_on: value[:worked_on], user_id: value[:user_id] )
         approval.change_approval = value[:change_approval]
       
@@ -60,10 +60,9 @@ class AdminsController < ApplicationController
 
   def update_overtime_approval
     params[:overtime_unapprovals].each do |key, value|
-      if value[:check_box] == "on"
+      if value[:check_box] = 1
         approval = Attendance.find_by( worked_on: value[:worked_on], user_id: value[:user_id] )
         approval.overtime_approval = value[:overtime_approval]
-
         # 残業ログにも情報を保存
       
         # 残業申請が承認 or 否認された場合
@@ -102,7 +101,7 @@ class AdminsController < ApplicationController
   
   def update_one_month_approval
     params[:unapprovals].each do |key, value|
-      if value[:check_box] == "on"
+      if value[:check_box] = 1
         approval = Apply.find_by( user_name: value[:user_name], month: value[:month].to_i )
         approval.mark = value[:mark]
         if approval.save
