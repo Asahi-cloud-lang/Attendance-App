@@ -66,7 +66,7 @@
         <% if @overtime_approval_results.count >= 1 %>
           <%= link_to "【残業申請のログ確認】", overtimes_log_user_path(@user), class: "btn btn-primary",remote: true %><span class="text-primary"><%= @overtime_approval_results.count %>件のログがあります</span>
         <% else %>
-          <span>【残業申請のログ確認】</span>
+          <%= link_to "【残業申請のログ確認】", overtimes_log_user_path(@user), class: "btn btn-primary",remote: true %><span class="text-primary">
         <% end %>
       <% end %>
     </div>    
